@@ -1,0 +1,10 @@
+streamlit 
+pandas 
+numpy 
+groq 
+faiss-cpu 
+langchain 
+sentence-transformers 
+PyPDF2 
+langchain-community 
+pypdf
