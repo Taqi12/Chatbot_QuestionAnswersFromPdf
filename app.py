@@ -6,19 +6,26 @@ from langchain.vectorstores import FAISS
 from langchain.document_loaders import PyPDFLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 
-# Initialize the Groq client
-GROQ_API_KEY = os.getenv("GROQ_API_KEY") # use your own api
-if not GROQ_API_KEY:
-    raise ValueError("Groq API key is missing! Please set it as a secret.")
-client = Groq(api_key=GROQ_API_KEY)
-
-# Define embedding model
-embedding_model = SentenceTransformerEmbeddings(model_name="all-MiniLM-L6-v2")
-
 # Streamlit App
 st.set_page_config(page_title="PDF Query App", layout="wide")
 st.title("📄 PDF Query Application")
 st.markdown("Upload your **PDF document**, and ask questions to get insights! 💡")
+
+# Option for the user to provide their own Groq API key
+user_api_key = st.text_input("Enter your Groq API key (Leave empty to use default)")
+
+# Use the user's API key or default API key from secrets.toml
+GROQ_API_KEY = user_api_key if user_api_key else st.secrets["GROQ_API_KEY"]["key"]
+
+# Initialize the Groq client
+if not GROQ_API_KEY:
+    st.error("Groq API key is missing!")
+    st.stop()
+
+client = Groq(api_key=GROQ_API_KEY)
+
+# Define embedding model
+embedding_model = SentenceTransformerEmbeddings(model_name="all-MiniLM-L6-v2")
 
 # Upload PDF file
 uploaded_file = st.file_uploader("📤 Upload a PDF file", type="pdf")
